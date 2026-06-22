@@ -1,5 +1,5 @@
 <p align="center">
-  <h1 align="center">🎫 Eventrahhb</h1>
+  <h1 align="center">🎫 Eventra</h1>
   <p align="center">
     <strong>Create Events. Book Tickets. Manage Everything.</strong>
   </p>
