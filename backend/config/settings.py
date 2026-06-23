@@ -36,6 +36,8 @@ DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
 
+# Custom User Model
+AUTH_USER_MODEL = 'accounts.User'
 
 # Application definition
 
@@ -50,7 +52,11 @@ INSTALLED_APPS = [
     # Third-party apps
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
+    
+    # Local apps
+    'accounts',
 ]
 
 MIDDLEWARE = [

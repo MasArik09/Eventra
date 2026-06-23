@@ -22,3 +22,19 @@ apiClient.interceptors.request.use(
     return Promise.reject(error)
   }
 )
+
+// Interceptor to handle 401 responses (Auto Logout)
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      const isLoginRequest = error.config.url && error.config.url.includes('/auth/login')
+      if (!isLoginRequest) {
+        localStorage.removeItem('access_token')
+        localStorage.removeItem('refresh_token')
+        window.location.href = '/login'
+      }
+    }
+    return Promise.reject(error)
+  }
+)

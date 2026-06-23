@@ -225,6 +225,16 @@ The frontend will be available at: **http://localhost:5173**
 
 > **✅ Tip:** If everything is running correctly, the frontend should be able to communicate with the backend API. Open the browser console (F12) to check for any connection errors.
 
+#### 👥 Demo / Testing Credentials
+
+For testing and verification, the following predefined accounts can be used:
+
+| Role | Name | Email | Password | Access / Scope |
+| :--- | :--- | :--- | :--- | :--- |
+| **Admin (Superuser)** | Admin | `admin@eventra.com` | `admin123` | Django Admin & Full Access |
+| **Attendee** | user | `user@eventra.com` | `user1234` | Discover & Book Tickets |
+| **Organizer** | organize | `organize@eventra.com` | `organize123` | Create & Manage Events |
+
 ---
 
 ## 🏗️ Architecture
