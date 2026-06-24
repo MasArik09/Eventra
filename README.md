@@ -68,9 +68,10 @@ This project is built with a strong focus on **clean architecture**, **maintaina
 - Ticket Validation & Check-In
 
 ### 💰 Coupon & Payment
-- Percentage & Fixed Amount Discounts
-- Usage Limits & Expiration Validation
-- Payment Simulation (Success / Pending / Failed)
+- Percentage & Fixed Amount Discounts (e.g., promo codes `EVENTRA10`, `WELCOME5`)
+- Live Currency Preferences (dynamic toggle between USD and IDR)
+- Real-time exchange rate calculation via Frankfurter API
+- Payment Simulation (Success / Pending / Failed results)
 
 ### 📊 Dashboards & Admin
 - Organizer: Participant Management & Sales Stats
