@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import EventCard from '../features/events/components/EventCard'
+import CheckoutModal from '../features/events/components/CheckoutModal'
 
 const DUMMY_EVENTS = [
   {
@@ -10,7 +11,7 @@ const DUMMY_EVENTS = [
     time: "7:00 PM - 11:00 PM",
     location: "Jakarta Amphitheater",
     category: "Music Concert",
-    price: "$75.00",
+    price: 75.00,
     image: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
     organizer: "Glow Symphony Inc.",
     availableTickets: 120,
@@ -22,7 +23,7 @@ const DUMMY_EVENTS = [
     time: "9:00 AM - 5:00 PM",
     location: "Bandung Convention Center",
     category: "Technology",
-    price: "Free",
+    price: 0,
     image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
     organizer: "Tech Pioneers",
     availableTickets: 450,
@@ -34,7 +35,7 @@ const DUMMY_EVENTS = [
     time: "10:00 AM - 2:00 PM",
     location: "Epicurean Studio, Bali",
     category: "Food & Culinary",
-    price: "$120.00",
+    price: 120.00,
     image: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
     organizer: "Chef Culinary Lab",
     availableTickets: 25,
@@ -43,6 +44,8 @@ const DUMMY_EVENTS = [
 
 export default function Events() {
   const [selectedCategory, setSelectedCategory] = useState('All')
+  const [checkoutEvent, setCheckoutEvent] = useState(null)
+
   const { data: events, isLoading } = useQuery({
     queryKey: ['events'],
     queryFn: async () => {
@@ -119,13 +122,31 @@ export default function Events() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filteredEvents?.map(event => (
-                <EventCard key={event.id} event={event} />
+                <EventCard 
+                  key={event.id} 
+                  event={event} 
+                  onBook={() => setCheckoutEvent(event)}
+                />
               ))}
             </div>
           )}
         </section>
 
       </div>
+
+      {checkoutEvent && (
+        <CheckoutModal
+          event={checkoutEvent}
+          onClose={() => setCheckoutEvent(null)}
+          onSuccess={(newTicket) => {
+            const saved = localStorage.getItem('eventra_booked_tickets')
+            const tickets = saved ? JSON.parse(saved) : []
+            tickets.unshift(newTicket)
+            localStorage.setItem('eventra_booked_tickets', JSON.stringify(tickets))
+            console.log('Ticket booked and saved:', newTicket)
+          }}
+        />
+      )}
     </div>
   )
 }

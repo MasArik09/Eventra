@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
+import { useCurrency } from '../shared/context/CurrencyContext'
 
 export default function Home() {
+  const { formatPrice } = useCurrency()
   return (
     <div className="relative bg-stone-50">
       {/* Decorative Coral Soft Blur Backgrounds */}
@@ -59,7 +61,7 @@ export default function Home() {
                 <div className="border-t border-charcoal-light/5 pt-3 flex justify-between items-center">
                   <div className="flex flex-col">
                     <span className="text-[10px] text-charcoal-light uppercase font-semibold">Price</span>
-                    <span className="text-charcoal font-black text-base">$75.00</span>
+                    <span className="text-charcoal font-black text-base">{formatPrice(75)}</span>
                   </div>
                   <Link to="/events" className="bg-coral hover:bg-coral-light text-white font-bold text-xs px-4 py-2.5 rounded-lg transition-colors">
                     Get Tickets

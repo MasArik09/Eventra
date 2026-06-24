@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom'
+import { useCurrency } from '../../../shared/context/CurrencyContext'
 
-export default function EventCard({ event }) {
+export default function EventCard({ event, onBook }) {
+  const { formatPrice } = useCurrency()
+
   return (
     <div className="rounded-2xl border border-charcoal-light/10 overflow-hidden bg-white hover:border-coral/30 hover:shadow-md transition-all flex flex-col group shadow-sm">
       <div className="relative h-48 overflow-hidden">
@@ -27,9 +30,12 @@ export default function EventCard({ event }) {
         <div className="border-t border-charcoal-light/5 pt-4 flex items-center justify-between mt-4">
           <div className="flex flex-col">
             <span className="text-charcoal-light text-[10px] uppercase tracking-wider font-semibold">Price</span>
-            <span className="text-charcoal font-extrabold text-lg">{event.price}</span>
+            <span className="text-charcoal font-extrabold text-lg">{formatPrice(event.price)}</span>
           </div>
-          <button className="bg-coral hover:bg-coral-light text-white font-bold text-xs px-4 py-2.5 rounded-lg transition-colors cursor-pointer">
+          <button 
+            onClick={onBook}
+            className="bg-coral hover:bg-coral-light text-white font-bold text-xs px-4 py-2.5 rounded-lg transition-colors cursor-pointer"
+          >
             Book Ticket
           </button>
         </div>

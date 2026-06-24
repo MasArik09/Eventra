@@ -1,5 +1,6 @@
 import { Link, NavLink, Routes, Route } from 'react-router-dom'
 import { useAuth } from './features/auth/context/AuthContext'
+import { useCurrency } from './shared/context/CurrencyContext'
 import Home from './pages/Home'
 import Events from './pages/Events'
 import Dashboard from './pages/Dashboard'
@@ -9,6 +10,7 @@ import ProtectedRoute from './features/auth/components/ProtectedRoute'
 
 export default function AppLayout() {
   const { user, logout, isAuthenticated } = useAuth()
+  const { currency, setCurrency } = useCurrency()
 
   return (
     <div className="min-h-screen bg-stone-50 text-charcoal flex flex-col font-sans antialiased selection:bg-coral selection:text-white overflow-x-hidden">
@@ -59,6 +61,16 @@ export default function AppLayout() {
             </nav>
           </div>
           <div className="flex items-center gap-4">
+            {/* Global Currency Preference Selector */}
+            <select
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value)}
+              className="bg-stone-100 hover:bg-stone-200 border border-charcoal-light/10 text-charcoal text-xs font-bold px-2.5 py-1.5 rounded-xl transition-colors focus:outline-none cursor-pointer"
+            >
+              <option value="USD">USD ($)</option>
+              <option value="IDR">IDR (Rp)</option>
+            </select>
+
             {isAuthenticated ? (
               <>
                 <span className="text-sm font-semibold text-charcoal-light">
