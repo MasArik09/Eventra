@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import EventCard from '../features/events/components/EventCard'
 import CheckoutModal from '../features/events/components/CheckoutModal'
+import { useCategories } from '../features/events/hooks/useCategories'
 
 const DUMMY_EVENTS = [
   {
@@ -10,7 +11,7 @@ const DUMMY_EVENTS = [
     date: "June 25, 2026",
     time: "7:00 PM - 11:00 PM",
     location: "Jakarta Amphitheater",
-    category: "Music Concert",
+    category: "Webinar",
     price: 75.00,
     image: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
     organizer: "Glow Symphony Inc.",
@@ -22,7 +23,7 @@ const DUMMY_EVENTS = [
     date: "July 12-14, 2026",
     time: "9:00 AM - 5:00 PM",
     location: "Bandung Convention Center",
-    category: "Technology",
+    category: "Workshop",
     price: 0,
     image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
     organizer: "Tech Pioneers",
@@ -30,11 +31,11 @@ const DUMMY_EVENTS = [
   },
   {
     id: 3,
-    title: "Mastering Gastronomy: Culinary Workshop",
+    title: "Mastering Gastronomy: Culinary Seminar",
     date: "August 05, 2026",
     time: "10:00 AM - 2:00 PM",
     location: "Epicurean Studio, Bali",
-    category: "Food & Culinary",
+    category: "Seminar",
     price: 120.00,
     image: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
     organizer: "Chef Culinary Lab",
@@ -46,7 +47,9 @@ export default function Events() {
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [checkoutEvent, setCheckoutEvent] = useState(null)
 
-  const { data: events, isLoading } = useQuery({
+  const { data: categoriesData = [], isLoading: isLoadingCategories } = useCategories()
+  
+  const { data: events, isLoading: isLoadingEvents } = useQuery({
     queryKey: ['events'],
     queryFn: async () => {
       await new Promise(resolve => setTimeout(resolve, 600))
@@ -54,11 +57,13 @@ export default function Events() {
     }
   })
 
+  const isLoading = isLoadingEvents || isLoadingCategories
+
   const filteredEvents = events?.filter(event => 
     selectedCategory === 'All' || event.category === selectedCategory
   )
 
-  const categories = ['All', 'Music Concert', 'Technology', 'Food & Culinary']
+  const categories = ['All', ...categoriesData.map(cat => cat.name)]
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-stone-50">
@@ -86,19 +91,27 @@ export default function Events() {
             <div>
               <h3 className="text-xs font-bold uppercase tracking-wider text-charcoal mb-3">Categories</h3>
               <div className="flex flex-col gap-2">
-                {categories.map(cat => (
-                  <button
-                    key={cat}
-                    onClick={() => setSelectedCategory(cat)}
-                    className={`text-left text-sm px-3 py-2 rounded-xl transition-all font-bold cursor-pointer ${
-                      selectedCategory === cat
-                        ? 'bg-coral text-white border border-coral shadow-md shadow-coral/10'
-                        : 'text-charcoal-light hover:bg-stone-50 hover:text-charcoal border border-transparent'
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                ))}
+                {isLoadingCategories ? (
+                  <div className="space-y-2">
+                    {[1, 2, 3, 4].map(i => (
+                      <div key={i} className="h-9 bg-stone-100 rounded-xl animate-pulse" />
+                    ))}
+                  </div>
+                ) : (
+                  categories.map(cat => (
+                    <button
+                      key={cat}
+                      onClick={() => setSelectedCategory(cat)}
+                      className={`text-left text-sm px-3 py-2 rounded-xl transition-all font-bold cursor-pointer ${
+                        selectedCategory === cat
+                          ? 'bg-coral text-white border border-coral shadow-md shadow-coral/10'
+                          : 'text-charcoal-light hover:bg-stone-50 hover:text-charcoal border border-transparent'
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  ))
+                )}
               </div>
             </div>
           </div>

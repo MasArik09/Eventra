@@ -86,7 +86,7 @@ export default function AppLayout() {
       </div>
 
       {/* Main content with spacing for floating header */}
-      <main className="flex-grow pt-28">
+      <main className="flex-grow pt-28 min-h-[100vh]">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/events" element={<Events />} />

@@ -385,8 +385,8 @@ Comprehensive project documentation is available in the [`docs/`](docs/) directo
 | Phase | Name                   | Status |
 | ----- | ---------------------- | ------ |
 | 0     | Project Foundation     | ✅     |
-| 1     | Authentication System  | 🔨     |
-| 2     | Event Categories       | 📋     |
+| 1     | Authentication System  | ✅     |
+| 2     | Event Categories       | ✅     |
 | 3     | Event Management       | 📋     |
 | 4     | Event Discovery        | 📋     |
 | 5     | Booking System         | 📋     |
