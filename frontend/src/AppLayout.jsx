@@ -5,6 +5,9 @@ import Events from './pages/Events'
 import Dashboard from './pages/Dashboard'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import EventDetail from './pages/EventDetail'
+import CreateEvent from './pages/CreateEvent'
+import EditEvent from './pages/EditEvent'
 import ProtectedRoute from './features/auth/components/ProtectedRoute'
 
 export default function AppLayout() {
@@ -90,11 +93,28 @@ export default function AppLayout() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/events" element={<Events />} />
+          <Route path="/events/:id" element={<EventDetail />} />
           <Route 
             path="/dashboard" 
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/dashboard/events/create" 
+            element={
+              <ProtectedRoute>
+                <CreateEvent />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/dashboard/events/:id/edit" 
+            element={
+              <ProtectedRoute>
+                <EditEvent />
               </ProtectedRoute>
             } 
           />

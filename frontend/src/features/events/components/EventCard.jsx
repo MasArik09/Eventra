@@ -8,12 +8,12 @@ export default function EventCard({ event, onBook }) {
     <div className="rounded-2xl border border-charcoal-light/10 overflow-hidden bg-white hover:border-coral/30 hover:shadow-md transition-all flex flex-col group shadow-sm">
       <div className="relative h-48 overflow-hidden">
         <img
-          src={event.image}
+          src={event.banner || event.image || 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&auto=format&fit=crop&q=60'}
           alt={event.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
         <span className="absolute top-4 left-4 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full text-[10px] font-semibold text-coral border border-charcoal-light/10">
-          {event.category}
+          {event.category?.name || 'Uncategorized'}
         </span>
       </div>
       <div className="p-6 flex-grow flex flex-col justify-between">

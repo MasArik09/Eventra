@@ -1,69 +1,22 @@
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import EventCard from '../features/events/components/EventCard'
 import CheckoutModal from '../features/events/components/CheckoutModal'
 import { useCategories } from '../features/events/hooks/useCategories'
-
-const DUMMY_EVENTS = [
-  {
-    id: 1,
-    title: "Symphony of Lights & Sound",
-    date: "June 25, 2026",
-    time: "7:00 PM - 11:00 PM",
-    location: "Jakarta Amphitheater",
-    category: "Webinar",
-    price: 75.00,
-    image: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-    organizer: "Glow Symphony Inc.",
-    availableTickets: 120,
-  },
-  {
-    id: 2,
-    title: "Global Tech Summit 2026",
-    date: "July 12-14, 2026",
-    time: "9:00 AM - 5:00 PM",
-    location: "Bandung Convention Center",
-    category: "Workshop",
-    price: 0,
-    image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-    organizer: "Tech Pioneers",
-    availableTickets: 450,
-  },
-  {
-    id: 3,
-    title: "Mastering Gastronomy: Culinary Seminar",
-    date: "August 05, 2026",
-    time: "10:00 AM - 2:00 PM",
-    location: "Epicurean Studio, Bali",
-    category: "Seminar",
-    price: 120.00,
-    image: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-    organizer: "Chef Culinary Lab",
-    availableTickets: 25,
-  },
-]
+import { useEvents } from '../features/events/hooks/useEvents'
 
 export default function Events() {
   const [selectedCategory, setSelectedCategory] = useState('All')
+  const [searchQuery, setSearchQuery] = useState('')
   const [checkoutEvent, setCheckoutEvent] = useState(null)
 
   const { data: categoriesData = [], isLoading: isLoadingCategories } = useCategories()
   
-  const { data: events, isLoading: isLoadingEvents } = useQuery({
-    queryKey: ['events'],
-    queryFn: async () => {
-      await new Promise(resolve => setTimeout(resolve, 600))
-      return DUMMY_EVENTS
-    }
+  const { data: events = [], isLoading: isLoadingEvents } = useEvents({
+    categoryId: selectedCategory === 'All' ? undefined : selectedCategory,
+    search: searchQuery,
   })
 
   const isLoading = isLoadingEvents || isLoadingCategories
-
-  const filteredEvents = events?.filter(event => 
-    selectedCategory === 'All' || event.category === selectedCategory
-  )
-
-  const categories = ['All', ...categoriesData.map(cat => cat.name)]
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-stone-50">
@@ -82,6 +35,8 @@ export default function Events() {
               <input
                 type="text"
                 placeholder="Search keywords..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-stone-50 border border-charcoal-light/20 rounded-xl px-4 py-2.5 text-sm text-charcoal placeholder-charcoal-light focus:outline-none focus:border-coral transition-colors"
               />
             </div>
@@ -98,19 +53,31 @@ export default function Events() {
                     ))}
                   </div>
                 ) : (
-                  categories.map(cat => (
+                  <>
                     <button
-                      key={cat}
-                      onClick={() => setSelectedCategory(cat)}
+                      onClick={() => setSelectedCategory('All')}
                       className={`text-left text-sm px-3 py-2 rounded-xl transition-all font-bold cursor-pointer ${
-                        selectedCategory === cat
+                        selectedCategory === 'All'
                           ? 'bg-coral text-white border border-coral shadow-md shadow-coral/10'
                           : 'text-charcoal-light hover:bg-stone-50 hover:text-charcoal border border-transparent'
                       }`}
                     >
-                      {cat}
+                      All
                     </button>
-                  ))
+                    {categoriesData.map(cat => (
+                      <button
+                        key={cat.id}
+                        onClick={() => setSelectedCategory(cat.id)}
+                        className={`text-left text-sm px-3 py-2 rounded-xl transition-all font-bold cursor-pointer ${
+                          selectedCategory === cat.id
+                            ? 'bg-coral text-white border border-coral shadow-md shadow-coral/10'
+                            : 'text-charcoal-light hover:bg-stone-50 hover:text-charcoal border border-transparent'
+                        }`}
+                      >
+                        {cat.name}
+                      </button>
+                    ))}
+                  </>
                 )}
               </div>
             </div>
@@ -132,9 +99,17 @@ export default function Events() {
                 </div>
               ))}
             </div>
+          ) : events.length === 0 ? (
+            <div className="p-16 text-center bg-white border border-charcoal-light/10 rounded-3xl">
+              <span className="text-4xl">🔍</span>
+              <h3 className="text-lg font-bold text-charcoal mt-4">Event tidak ditemukan</h3>
+              <p className="text-charcoal-light text-sm mt-1">
+                Tidak ada event aktif yang sesuai dengan kriteria filter atau pencarian Anda.
+              </p>
+            </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {filteredEvents?.map(event => (
+              {events.map(event => (
                 <EventCard 
                   key={event.id} 
                   event={event} 
