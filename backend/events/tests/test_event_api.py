@@ -72,7 +72,7 @@ class EventAPITests(APITestCase):
         response = self.client.get(self.list_create_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(response.data['success'])
-        self.assertEqual(len(response.data['data']), 0)
+        self.assertEqual(len(response.data['data']['results']), 0)
 
         # Mark as published
         self.existing_event.status = 'published'
@@ -81,8 +81,56 @@ class EventAPITests(APITestCase):
         # Should appear now
         response = self.client.get(self.list_create_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data['data']), 1)
-        self.assertEqual(response.data['data'][0]['title'], self.existing_event.title)
+        self.assertEqual(len(response.data['data']['results']), 1)
+        self.assertEqual(response.data['data']['results'][0]['title'], self.existing_event.title)
+
+    def test_list_events_filtering_and_sorting(self):
+        # Publish existing event
+        self.existing_event.status = 'published'
+        self.existing_event.save()
+
+        # Create another published event
+        other_event = Event.objects.create(
+            organizer=self.organizer,
+            category=self.other_category,
+            title="Tech Conf 2026",
+            description="Django conference",
+            date="2026-07-15",
+            time="10:00",
+            location="Bandung",
+            price=0.00,
+            available_tickets=20,
+            status="published"
+        )
+
+        # Test category filter
+        response = self.client.get(self.list_create_url, {"category": self.other_category.id})
+        self.assertEqual(len(response.data['data']['results']), 1)
+        self.assertEqual(response.data['data']['results'][0]['title'], "Tech Conf 2026")
+
+        # Test search filter
+        response = self.client.get(self.list_create_url, {"search": "Django"})
+        self.assertEqual(len(response.data['data']['results']), 1)
+        self.assertEqual(response.data['data']['results'][0]['title'], "Tech Conf 2026")
+
+        # Test is_free filter
+        response = self.client.get(self.list_create_url, {"is_free": "true"})
+        self.assertEqual(len(response.data['data']['results']), 1)
+        self.assertEqual(response.data['data']['results'][0]['title'], "Tech Conf 2026")
+
+        # Test price range
+        response = self.client.get(self.list_create_url, {"price_min": 10.00, "price_max": 80.00})
+        self.assertEqual(len(response.data['data']['results']), 1)
+        self.assertEqual(response.data['data']['results'][0]['title'], "Symphony of Lights & Sound")
+
+        # Test date range
+        response = self.client.get(self.list_create_url, {"date_from": "2026-07-01", "date_to": "2026-07-31"})
+        self.assertEqual(len(response.data['data']['results']), 1)
+        self.assertEqual(response.data['data']['results'][0]['title'], "Tech Conf 2026")
+
+        # Test sorting
+        response = self.client.get(self.list_create_url, {"ordering": "price"})
+        self.assertEqual(response.data['data']['results'][0]['title'], "Tech Conf 2026") # free first
 
     def test_create_event_organizer_success(self):
         self.client.force_authenticate(user=self.organizer)

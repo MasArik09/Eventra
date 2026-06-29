@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
 import {
   fetchEvents,
   fetchManagedEvents,
@@ -14,6 +14,7 @@ export function useEvents(filters = {}) {
   return useQuery({
     queryKey: ['events', filters],
     queryFn: () => fetchEvents(filters),
+    placeholderData: keepPreviousData,
   })
 }
 

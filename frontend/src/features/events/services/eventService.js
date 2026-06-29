@@ -1,6 +1,17 @@
 import { apiClient } from '../../../shared/api'
 
-export const fetchEvents = async ({ categoryId, search } = {}) => {
+export const fetchEvents = async ({
+  categoryId,
+  search,
+  page,
+  pageSize,
+  dateFrom,
+  dateTo,
+  priceMin,
+  priceMax,
+  isFree,
+  ordering
+} = {}) => {
   const params = {}
   if (categoryId && categoryId !== 'All') {
     params.category = categoryId
@@ -8,6 +19,31 @@ export const fetchEvents = async ({ categoryId, search } = {}) => {
   if (search) {
     params.search = search
   }
+  if (page) {
+    params.page = page
+  }
+  if (pageSize) {
+    params.page_size = pageSize
+  }
+  if (dateFrom) {
+    params.date_from = dateFrom
+  }
+  if (dateTo) {
+    params.date_to = dateTo
+  }
+  if (priceMin !== undefined && priceMin !== '') {
+    params.price_min = priceMin
+  }
+  if (priceMax !== undefined && priceMax !== '') {
+    params.price_max = priceMax
+  }
+  if (isFree !== undefined && isFree !== null) {
+    params.is_free = isFree
+  }
+  if (ordering) {
+    params.ordering = ordering
+  }
+
   const response = await apiClient.get('/events', { params })
   return response.data.data
 }
